@@ -1,0 +1,23 @@
+# dvc.yaml
+
+stages:
+  ingest:
+    cmd: python -c "from data_pipeline import ingest; df = ingest.download_intraday_data(); ingest.save_raw_data(df)"
+    outs:
+      - data/raw/nifty50_5min.csv
+
+  validate:
+    cmd: python -c "from data_pipeline import ingest, validate; df = ingest.download_intraday_data(); validate.validate_data(df)"
+    deps:
+      - data_pipeline/ingest.py
+      - data_pipeline/validate.py
+      - data/raw/nifty50_5min.csv
+
+  transform:
+    cmd: python -c "from data_pipeline import ingest, transform; df = ingest.download_intraday_data(); df = transform.add_features(df); transform.save_transformed_data(df)"
+    deps:
+      - data_pipeline/ingest.py
+      - data_pipeline/transform.py
+      - data/raw/nifty50_5min.csv
+    outs:
+      - data/processed/nifty50_5min_features.csv
