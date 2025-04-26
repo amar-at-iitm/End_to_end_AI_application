@@ -26,6 +26,11 @@ This project is an end-to-end AI application that predicts Nifty50 stock prices 
 │   ├── validate.py
 │   ├── transform.py
 │   └── pipeline.py
+├── app/                      # FastAPI Inference API
+│   ├── main.py               # FastAPI app (entry point)
+│   ├── model.py              # Load model and predict
+│   ├── schemas.py            # Request/Response data models
+│
 ├── dvc.yaml
 ├── .dvc/
 ├── .git/
