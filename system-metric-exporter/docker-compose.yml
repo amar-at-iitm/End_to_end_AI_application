@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  metrics_exporter:
+    build: .
+    container_name: metrics_exporter
+    restart: always
+    ports:
+      - "18000:18000"
+    volumes:
+      - /proc:/host_proc:ro   # Mount /proc for memory stats
+      - /dev:/host_dev:ro     # Optional: For device access (optional for iostat)
+    environment:
+      - PROC_PATH=/host_proc
+    privileged: true          # Needed for sysstat to access system metrics
