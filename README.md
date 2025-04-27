@@ -31,7 +31,7 @@ This project is an end-to-end AI application that predicts Nifty50 stock prices 
 │   ├── transform.py
 │   └── pipeline.py
 
-├── ml_pipeline/                      # FastAPI Inference API
+├── ml_pipeline/                      
 │   ├── train.py
 
 ├── app/                      # FastAPI Inference API
