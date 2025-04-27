@@ -21,11 +21,20 @@ This project is an end-to-end AI application that predicts Nifty50 stock prices 
 │   │   └── nifty50_5min.csv
 │   └── processed/
 │       └── nifty50_5min_features.csv
+
+├── model/                      
+│   ├── best_model.pth
+
 ├── data_pipeline/
 │   ├── ingest.py
 │   ├── validate.py
 │   ├── transform.py
 │   └── pipeline.py
+
+ml_pipeline/
+|    ├── model_architecture.py    # model class only
+|    └── train.py                 # train script
+
 ├── app/                      # FastAPI Inference API
 │   ├── main.py               # FastAPI app (entry point)
 │   ├── model.py              # Load model and predict
