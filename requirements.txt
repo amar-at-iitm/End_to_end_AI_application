@@ -1,0 +1,39 @@
+# Core ML & Data
+pandas
+numpy
+scikit-learn
+xgboost
+yfinance
+matplotlib
+seaborn
+torch
+torchinfo
+
+# MLflow tracking
+mlflow
+
+# Backend API
+fastapi
+uvicorn
+pydantic
+
+# Monitoring
+prometheus_client
+prometheus-fastapi-instrumentator
+
+
+# Scheduling (for drift detection or feedback-based retraining)
+schedule
+
+# Serialization
+joblib
+
+# Environment config for dev mode
+python-dotenv
+
+# Optional: Jupyter for EDA
+jupyterlab
+notebook
+
+# For pipeline versioning
+dvc
