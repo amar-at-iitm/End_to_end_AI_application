@@ -2,6 +2,7 @@
 # /////////////////////////////////////////
 # Load control parameters from config.ini
 # /////////////////////////////////////////
+
 import configparser
 import os
 
@@ -102,7 +103,7 @@ def set_seed(seed=42):
 
 
 # Example usage
-global_seed = config.get("DATA", "global_seed", fallback=42)
+global_seed = int(config.get("DATA", "global_seed", fallback=42))
 set_seed(global_seed)
 
 

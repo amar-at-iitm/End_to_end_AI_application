@@ -1,53 +1,38 @@
 # app/model.py
 import torch
-import torch.nn as nn
 import numpy as np
-from fastapi import FastAPI
+import configparser
+import os
 
-from app.schemas import PredictionRequest  # (if needed later)
-from ml_pipeline.model_architecture import StockPriceModel
-from prometheus_fastapi_instrumentator import Instrumentator
+from ml_pipeline.model_architecture import LSTMModel
 
-app = FastAPI()
+# --- Load config ---
+config = configparser.ConfigParser()
+config_filepath = os.path.join('./ml_pipeline', 'config.ini')
+config.read(config_filepath)
 
-# Load your trained best model
-model = StockPriceModel(input_size= input_size)
-model.load_state_dict(torch.load("model/best_model.pth", map_location=torch.device('cpu')))
-model.eval()  # VERY IMPORTANT to set eval mode
+# config = configparser()
+# config.read('./ml_pipeline/config.ini') 
 
-def predict(input_tensor):
-    with torch.no_grad():
-        prediction = model(input_tensor)
-    return prediction
-
-
-Instrumentator().instrument(app).expose(app)
-
+INPUT_SIZE = config.getint('MODEL', 'input_size')
+HIDDEN_SIZE = config.getint('MODEL', 'hidden_size')
+NUM_LAYERS = config.getint('MODEL', 'num_layers')
 
 # --- Config ---
-MODEL_PATH = "model/best_model.pth"
-# SCALER_PATH = "model/scaler.pkl"  # Uncomment if using scaler
+MODEL_PATH = config.get('model', 'model_path', fallback="./models/best_model.pth")  # Make this more flexible
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-INPUT_SIZE = 5
-SEQ_LENGTH = 60
 
 # --- Load model once at server start ---
 model = None
-scaler = None
 
-def load_model_and_scaler():
-    global model, scaler
-    model = StockPriceModel(input_size=INPUT_SIZE)
+def load_model():
+    global model
+    model = LSTMModel(input_size=INPUT_SIZE, hidden_size=HIDDEN_SIZE, num_layers=NUM_LAYERS)
     model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
     model.to(DEVICE)
     model.eval()
 
-    # try:
-    #     scaler = joblib.load(SCALER_PATH)
-    # except:
-    #     scaler = None
-
-load_model_and_scaler()
+load_model()
 
 # --- Predict function ---
 def predict_stock_price(input_sequence: np.ndarray) -> float:
@@ -56,8 +41,6 @@ def predict_stock_price(input_sequence: np.ndarray) -> float:
         prediction = model(model_input)
 
     prediction = prediction.cpu().numpy().flatten()
-
-    if scaler is not None:
-        prediction = scaler.inverse_transform(prediction.reshape(-1, 1)).flatten()
-
+    prediction = np.clip(prediction, 0, None)  # Ensures non-negative predictions
+    prediction = np.round(prediction, 3)  # Round-off to 3 decimal places
     return prediction[0]
