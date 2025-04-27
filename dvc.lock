@@ -1,0 +1,47 @@
+schema: '2.0'
+stages:
+  ingest:
+    cmd: python -c "from data_pipeline import ingest; df = ingest.download_intraday_data();
+      ingest.save_raw_data(df)"
+    outs:
+    - path: data/raw/nifty50_5min.csv
+      hash: md5
+      md5: be9787f6006614ec7b064a4026ba87b4
+      size: 447433
+  validate:
+    cmd: python -c "from data_pipeline import ingest, validate; df = ingest.download_intraday_data();
+      validate.validate_data(df)"
+    deps:
+    - path: data/raw/nifty50_5min.csv
+      hash: md5
+      md5: be9787f6006614ec7b064a4026ba87b4
+      size: 447433
+    - path: data_pipeline/ingest.py
+      hash: md5
+      md5: 14404bd8422ea9724f1c766bfa4e917d
+      size: 831
+    - path: data_pipeline/validate.py
+      hash: md5
+      md5: e576c53ae21434b1bddf73eff1e114b6
+      size: 303
+  transform:
+    cmd: python -c "from data_pipeline import ingest, transform; df = ingest.download_intraday_data();
+      df = transform.add_features(df); transform.save_transformed_data(df)"
+    deps:
+    - path: data/raw/nifty50_5min.csv
+      hash: md5
+      md5: be9787f6006614ec7b064a4026ba87b4
+      size: 447433
+    - path: data_pipeline/ingest.py
+      hash: md5
+      md5: 14404bd8422ea9724f1c766bfa4e917d
+      size: 831
+    - path: data_pipeline/transform.py
+      hash: md5
+      md5: a6ff0f6f0a1942b39b28477468a66e90
+      size: 864
+    outs:
+    - path: data/processed/nifty50_5min_features.csv
+      hash: md5
+      md5: 59659b4a5cff8e39376db2eb76ebdb02
+      size: 602154

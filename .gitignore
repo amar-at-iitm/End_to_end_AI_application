@@ -1,0 +1,18 @@
+# files 
+.dvc
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite
+*.log
+.lock
+.txt
+
+
+
+# folders
+ai_app/
+__pycache__/
+mlruns/
+mlartifacts/

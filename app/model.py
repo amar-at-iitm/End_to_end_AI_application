@@ -26,6 +26,7 @@ Instrumentator().instrument(app).expose(app)
 
 # --- Config ---
 MODEL_PATH = "model/best_model.pth"
+# SCALER_PATH = "model/scaler.pkl"  # Uncomment if using scaler
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 INPUT_SIZE = 5
 SEQ_LENGTH = 60
@@ -36,15 +37,15 @@ scaler = None
 
 def load_model_and_scaler():
     global model, scaler
-    model = YourModelClass(input_size=INPUT_SIZE)
+    model = StockPriceModel(input_size=INPUT_SIZE)
     model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
     model.to(DEVICE)
     model.eval()
 
-    try:
-        scaler = joblib.load(SCALER_PATH)
-    except:
-        scaler = None
+    # try:
+    #     scaler = joblib.load(SCALER_PATH)
+    # except:
+    #     scaler = None
 
 load_model_and_scaler()
 
