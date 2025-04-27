@@ -21,3 +21,11 @@ stages:
       - data/raw/nifty50_5min.csv
     outs:
       - data/processed/nifty50_5min_features.csv
+
+  # train:
+  #   cmd: python train.py
+  #   deps:
+  #     - data/processed/nifty50_5min_features.csv
+  #     - train.py
+  #   outs:
+  #     - models/your_model.pkl
