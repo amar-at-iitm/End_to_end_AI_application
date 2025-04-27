@@ -30,11 +30,16 @@ This project is an end-to-end AI application that predicts Nifty50 stock prices 
 │   ├── main.py               # FastAPI app (entry point)
 │   ├── model.py              # Load model and predict
 │   ├── schemas.py            # Request/Response data models
-│
+├── system-metrics-exporter/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   ├── requirements.txt
+│   ├── metrics_exporter.py   
 ├── dvc.yaml
 ├── .dvc/
 ├── .git/
 └── requirements.txt
+
 ```
 
 
