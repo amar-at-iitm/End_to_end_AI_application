@@ -5,6 +5,7 @@
 
 import configparser
 import os
+import joblib
 
 # Load configuration
 config = configparser.ConfigParser()
@@ -143,6 +144,10 @@ test_data = test_data.reset_index(drop=True)
 # Normalize the "Close" column in both train and test sets
 train_data[target_column] = scaler.fit_transform(train_data[[target_column]])
 test_data[target_column] = scaler.transform(test_data[[target_column]])
+# Save the scaler for future use
+scaler_path = os.path.join("models", "scaler.pkl")
+joblib.dump(scaler, scaler_path)
+mlflow.log_artifact(scaler_path)
 
 logger.info(f"Train data shape: {train_data.shape}")
 logger.info(f"Test data shape: {test_data.shape}")
@@ -272,7 +277,8 @@ params = {
 # MLflow Logging
 # This script logs parameters, metrics, and model artifacts to MLflow.
 # ///////////////////////////////////////////
-
+if mlflow.active_run():
+    mlflow.end_run()
 
 # Start MLflow run
 with mlflow.start_run() as run:
