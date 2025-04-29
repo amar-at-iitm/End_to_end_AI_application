@@ -7,4 +7,5 @@ class PredictRequest(BaseModel):
     data: List[List[float]]  # 2D List: (seq_length, input_size)
 
 class PredictResponse(BaseModel):
-    prediction: float
+    #prediction: float        # for single prediction
+    prediction: List[float]  # for multiple predictions

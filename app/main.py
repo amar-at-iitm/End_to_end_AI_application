@@ -1,5 +1,4 @@
 # app/main.py
-import torch
 from fastapi import FastAPI
 import numpy as np
 from app.model import predict_stock_price
@@ -10,23 +9,17 @@ from prometheus_fastapi_instrumentator import Instrumentator
 app = FastAPI()
 Instrumentator().instrument(app).expose(app)
 
+
+
 # @app.post("/predict", response_model=PredictResponse)
 # def get_prediction(request: PredictRequest):
-#     # Convert the request data into a NumPy array
-#     input_data = np.array(request.data)  # Convert List[List[float]] to np.array
-
-#     # Convert the NumPy array to a PyTorch tensor and add batch dimension
-#     input_data = torch.tensor(input_data).float().unsqueeze(0)
-
-#     # Call the predict function
-#     output = predict_stock_price(input_data)
-
-#     # Return the prediction as a response
-#     return PredictResponse(prediction=output.item())
-
+#     input_data = np.array(request.data)  # Just convert to np.array
+#     #output = predict_stock_price(input_data)                 # for single prediction
+#     output = predict_stock_price(input_data, steps=30)        # for multiple predictions
+#     return PredictResponse(prediction=[float(output[0])])
 
 @app.post("/predict", response_model=PredictResponse)
 def get_prediction(request: PredictRequest):
-    input_data = np.array(request.data)  # Just convert to np.array
-    output = predict_stock_price(input_data)  # pass np.array directly
-    return PredictResponse(prediction=output)
+    input_data = np.array(request.data)
+    output = predict_stock_price(input_data, steps=30)  # Returns a list
+    return PredictResponse(prediction=[float(val) for val in output])  # Return full list

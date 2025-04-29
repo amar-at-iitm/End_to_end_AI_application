@@ -40,18 +40,49 @@ def load_model_and_scaler():
 
 load_model_and_scaler()
 
-# --- Predict function ---
-def predict_stock_price(input_sequence: np.ndarray) -> float:
-    model_input = torch.tensor(input_sequence, dtype=torch.float32).unsqueeze(0).to(DEVICE)
+# --- Prediction function ---
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////
+# This function takes a sequence of stock prices and predicts the next price
+
+# def predict_stock_price(input_sequence: np.ndarray) -> float:
+#     model_input = torch.tensor(input_sequence, dtype=torch.float32).unsqueeze(0).to(DEVICE)
+#     with torch.no_grad():
+#         prediction = model(model_input)
+
+#     prediction = prediction.cpu().numpy().flatten()
+#     prediction = np.clip(prediction, 0, None)  # Ensures non-negative predictions
+#     prediction = np.round(prediction, 3)  # Round-off to 3 decimal places
+#     if scaler is not None:
+#         prediction = scaler.inverse_transform(prediction.reshape(-1, 1))
+#     else:
+#         prediction = prediction.reshape(-1, 1)
+
+#     return prediction[0]
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+# This function takes a sequence of stock prices and predicts the next 'steps' prices
+def predict_stock_price(input_sequence: np.ndarray, steps: int = 30) -> list:
+    sequence = torch.tensor(input_sequence, dtype=torch.float32).unsqueeze(0).to(DEVICE)
+    predictions = []
+
     with torch.no_grad():
-        prediction = model(model_input)
+        for _ in range(steps):
+            output = model(sequence)
+            prediction = output.cpu().numpy().flatten()[0]
+            prediction = np.clip(prediction, 0, None)
+            prediction = np.round(prediction, 3)
 
-    prediction = prediction.cpu().numpy().flatten()
-    prediction = np.clip(prediction, 0, None)  # Ensures non-negative predictions
-    prediction = np.round(prediction, 3)  # Round-off to 3 decimal places
-    if scaler is not None:
-        prediction = scaler.inverse_transform(prediction.reshape(-1, 1))
-    else:
-        prediction = prediction.reshape(-1, 1)
+            # Inverse transform if scaler exists
+            if scaler is not None:
+                prediction_scaled = scaler.inverse_transform(np.array([[prediction]]))[0][0]
+            else:
+                prediction_scaled = prediction
 
-    return prediction[0]
+            predictions.append(prediction_scaled)
+
+            # Create next input — reuse previous features structure (simplified)
+            next_input = torch.tensor([[prediction] * sequence.shape[-1]], dtype=torch.float32).to(DEVICE)
+            sequence = torch.cat((sequence[:, 1:, :], next_input.unsqueeze(0)), dim=1)
+
+    return predictions
