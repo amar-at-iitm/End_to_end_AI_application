@@ -1,5 +1,6 @@
 # data_pipeline/transform.py
 import pandas as pd
+import os
 
 def add_features(df):
     df['MA_20'] = df['Close'].rolling(window=20).mean()
@@ -8,6 +9,7 @@ def add_features(df):
     return df
 
 def save_transformed_data(df, path="data/processed/nifty50_5min_features.csv"):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     df.to_csv(path, index=False)
     print(f"[INFO] Transformed data saved to {path}")
 
