@@ -5,3 +5,4 @@ pandas
 numpy
 scikit-learn
 plotly
+prometheus_fastapi_instrumentator

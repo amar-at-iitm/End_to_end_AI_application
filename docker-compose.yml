@@ -1,10 +1,10 @@
 version: '3.8'
 
 services:
-  app:
+  backend_app:
     build:
       context: ./app
-    container_name: app
+    container_name: backend_app
     ports:
       - "8000:8000"
     healthcheck:
@@ -13,7 +13,7 @@ services:
       timeout: 10s
       retries: 3
     volumes:
-      - ./model/:/app/model/
+      - ./models/:/app/models/
       - ./ml_pipeline/:/app/ml_pipeline/
       - ./data/:/app/data/
     restart: always
@@ -21,7 +21,7 @@ services:
   streamlit_app:
     build:
       context: .
-      dockerfile: StreamlitDockerfile
+      dockerfile: dockerfile
     container_name: streamlit_app
     ports:
       - "8501:8501"
@@ -43,12 +43,11 @@ services:
     ports:
       - "18000:18000"
     volumes:
-      - proc:/host_proc:ro
-      - dev:/host_dev:ro
+      - /proc:/host_proc:ro
+      - /dev:/host_dev:ro
     environment:
       - PROC_PATH=/host_proc
     privileged: true
-    network_mode: host 
     
   grafana:
     image: grafana/grafana
@@ -78,7 +77,3 @@ services:
 
 volumes:
   grafana-storage:
-  proc:
-    driver: local
-  dev:
-    driver: local
