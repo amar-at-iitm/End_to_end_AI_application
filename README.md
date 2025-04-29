@@ -40,9 +40,15 @@ ml_pipeline/
 │   ├── model.py              # Load model and predict
 │   ├── schemas.py            # Request/Response data models
 │
+├── system-metric-exporter
+│   ├── Dockerfile
+│   ├── metrics_exporter.py
+│   └── requirements.txt
 ├── dvc.yaml
 ├── .dvc/
 ├── .git/
+├── docker-compose.yml
+├── dockerfile
 └── requirements.txt
 ```
 
