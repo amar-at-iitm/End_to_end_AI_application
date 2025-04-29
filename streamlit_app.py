@@ -4,6 +4,9 @@ from datetime import datetime
 import pandas as pd
 import requests
 import subprocess
+import smtplib
+from email.message import EmailMessage
+from datetime import datetime
 import os
 
 # Constants
@@ -153,6 +156,8 @@ except Exception as e:
 # --- Feedback Section ---
 st.header("Feedback on Prediction")
 
+
+
 # Define functions
 def mark_satisfied():
     st.session_state.feedback = "satisfied"
@@ -162,57 +167,21 @@ def mark_not_satisfied():
     st.session_state.feedback = "not_satisfied"
     st.session_state.prediction_made = False
 
-# Function to retrain the model
-def retrain_model():
-    dvc_success = False
+# Function to notify developer instead of retraining
+def notify_developer(feedback_details="Prediction was not satisfactory."):
+    msg = EmailMessage()
+    msg.set_content(f"User Feedback - Model Issue\n\nTimestamp: {datetime.now()}\nDetails: {feedback_details}")
+    msg["Subject"] = " Feedback: Model prediction unsatisfactory"
+    msg["From"] = "abhijit912813@gmail.com"
+    msg["To"] = "amar8409849358@gmail.com"
 
-    with st.spinner("Running DVC pipeline... Please wait"):
-        try:
-            # Run dvc repro
-            repro_result = subprocess.run(
-                ["dvc", "repro"],
-                capture_output=True,
-                text=True,
-                check=True
-            )
-            st.success("DVC Repro successful!")
-            st.code(repro_result.stdout)
-
-            # Run dvc push
-            push_result = subprocess.run(
-                ["dvc", "push", "-r", "remote_ai_app"],
-                capture_output=True,
-                text=True,
-                check=True
-            )
-            st.success("DVC Push successful!")
-            st.code(push_result.stdout)
-
-            dvc_success = True
-
-        except subprocess.CalledProcessError as e:
-            st.warning("DVC update failed. Proceeding with existing data.")
-            st.code(e.stderr)
-
-    with st.spinner("Retraining model... Please wait"):
-        try:
-            if dvc_success:
-                st.info("Model retraining with updated data...")
-            else:
-                st.info("Model retraining with Existing data...")
-
-            retrain_result = subprocess.run(
-                ["python", "ml_pipeline/train.py"],
-                capture_output=True,
-                text=True,
-                check=True
-            )
-            st.success("Model retrained successfully!")
-            st.code(retrain_result.stdout)
-        except subprocess.CalledProcessError as e:
-            st.error(f"Error during model retraining: {e}")
-            st.code(e.stderr)
-
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+            smtp.login("abhijit912813@gmail.com", "cbmghskpqrozbyyy")  # Use app-specific password for Gmail
+            smtp.send_message(msg)
+        st.success("Feedback sent to the developer. Thank you!")
+    except Exception as e:
+        st.error(f"Failed to send feedback: {e}")
 
 # Feedback buttons
 col1, col2 = st.columns(2)
@@ -228,28 +197,27 @@ if st.session_state.feedback == "satisfied" and not st.session_state.prediction_
 elif st.session_state.feedback == "not_satisfied" and not st.session_state.prediction_made:
     st.warning("You chose 'Not Satisfied'.")
     
-    confirm_retrain = st.checkbox("⚡ I confirm I want to retrain the model")
+    confirm_retrain = st.checkbox("⚡ I confirm I want to send this to the developer")
     if confirm_retrain:
-        if st.button("Start Retraining"):
-            retrain_model()
+        if st.button("Send Feedback to Developer"):
+            notify_developer("User marked the prediction as unsatisfactory. Please review the model output.")
 
-# --- Data Update Section ---
-# --- Data Update Section ---
-st.header("Update Data")
+# # --- Data Update Section ---
+# st.header("Update Data")
 
-if st.button("Update Data Pipeline"):
-    with st.spinner("Running data pipeline..."):
-        try:
-            # Run the custom data update script
-            update_result = subprocess.run(
-                ["python", "data_pipeline/pipeline.py"],
-                capture_output=True,
-                text=True,
-                check=True
-            )
-            st.success("Data pipeline ran successfully!")
-            st.code(update_result.stdout)
+# if st.button("Update Data Pipeline"):
+#     with st.spinner("Running data pipeline..."):
+#         try:
+#             # Run the custom data update script
+#             update_result = subprocess.run(
+#                 ["python", "data_pipeline/pipeline.py"],
+#                 capture_output=True,
+#                 text=True,
+#                 check=True
+#             )
+#             st.success("Data pipeline ran successfully!")
+#             st.code(update_result.stdout)
 
-        except subprocess.CalledProcessError as e:
-            st.error("Error during data pipeline execution.")
-            st.code(e.stderr)
+#         except subprocess.CalledProcessError as e:
+#             st.error("Error during data pipeline execution.")
+#             st.code(e.stderr)
