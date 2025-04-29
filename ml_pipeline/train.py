@@ -230,7 +230,7 @@ early_stopping = EarlyStopping(
     min_delta=early_stopping_delta,
 )  # noqa: E501
 
-max_num_epochs = config.getint("TRAINING", "max_num_epochs", fallback=300)
+max_num_epochs = config.getint("TRAINING", "max_num_epochs", fallback=30)
 
 # Check device
 if torch.backends.mps.is_available():
