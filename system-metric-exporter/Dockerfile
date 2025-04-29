@@ -1,4 +1,5 @@
-# Use official Python slim image
+# system_metric-exporter/dockerfile
+
 FROM python:3.10-slim
 
 # Install iostat tool

@@ -1,41 +1,40 @@
 version: '3.8'
 
 services:
-  data_pipeline:
-    build:
-      context: ./data_pipeline
-    container_name: data_pipeline
-    volumes:
-      - ./data/:/app/data/
-    depends_on: []
-    restart: on-failure
-    command: ["python", "pipeline.py"]
-
-  ml_pipeline:
-    build:
-      context: ./ml_pipeline
-    container_name: ml_pipeline
-    volumes:
-      - ./model/:/app/model/
-      - ./data/:/app/data/
-    depends_on:
-      - data_pipeline
-    restart: on-failure
-    command: ["python", "train.py"]
-
   app:
     build:
       context: ./app
     container_name: app
     ports:
       - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     volumes:
       - ./model/:/app/model/
       - ./ml_pipeline/:/app/ml_pipeline/
       - ./data/:/app/data/
-    depends_on:
-      - ml_pipeline
     restart: always
+
+  streamlit_app:
+    build:
+      context: .
+      dockerfile: StreamlitDockerfile
+    container_name: streamlit_app
+    ports:
+      - "8501:8501"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./data:/app/data
+      - ./model:/app/model
+    restart: always
+
 
   metrics_exporter:
     build: ./system-metric-exporter

@@ -5,12 +5,13 @@ scikit-learn
 xgboost
 yfinance
 matplotlib
+plotly
 seaborn
-torch
-torchinfo
+#torch
+#torchinfo
 
 # MLflow tracking
-mlflow
+#mlflow
 
 # Backend API
 fastapi
@@ -31,9 +32,6 @@ joblib
 # Environment config for dev mode
 python-dotenv
 
-# Optional: Jupyter for EDA
-jupyterlab
-notebook
-
+streamlit
 # For pipeline versioning
-dvc
+#dvc

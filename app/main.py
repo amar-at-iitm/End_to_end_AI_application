@@ -1,7 +1,7 @@
 # app/main.py
 from fastapi import FastAPI
 import numpy as np
-from model import predict_stock_price
+from app.model import predict_stock_price
 from app.schemas import PredictRequest, PredictResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
