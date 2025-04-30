@@ -13,6 +13,32 @@ This project is an end-to-end AI application that predicts Nifty50 stock prices 
 - Ready for integration with MLflow, Docker, Prometheus & Grafana
 
 
+## Architecture 
+```
++-------------------------+       +---------------------+      +-------------------+
+|   Frontend Web App     | <---> | Backend (Model API) | <--> |  Model Inference   |
+|     (Streamlit)        |       |     (FastAPI)       |      |(MLflow, .pth, .pkl)|
++-------------------------+       +---------------------+      +-------------------+
+                                           |
+                                           v
+                                 +----------------------+
+                                 | Prometheus Monitoring|
+                                 +----------------------+
+                                           |
+                                           v
+                                   +------------------+
+                                   | Grafana Dashboard|
+                                   +------------------+  
+All Dockerized together:
+- Frontend
+- Backend
+- Prometheus
+- Metrics Exporter
+- Grafana
+
+```
+
+
 ## Folder Structure
 ```
 .
