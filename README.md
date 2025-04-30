@@ -70,6 +70,12 @@ ml_pipeline/
 │   ├── Dockerfile
 │   ├── metrics_exporter.py
 │   └── requirements.txt
+|
+drift_detection/
+├── detect_drift.py
+├── drift_report.json
+└── __init__.py
+|
 ├── dvc.yaml
 ├── .dvc/
 ├── .git/
