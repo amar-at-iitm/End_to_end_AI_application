@@ -16,6 +16,7 @@ datasources:
     type: prometheus
     access: proxy
     orgId: 1
+    uid: "aekdr0wzykq9sd"
     url: http://prometheus:9090
     isDefault: true
     editable: true
