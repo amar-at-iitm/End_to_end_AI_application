@@ -8,11 +8,20 @@ import smtplib
 from email.message import EmailMessage
 from datetime import datetime
 import os
+import socket
 
 # Constants
 DATA_PATH = "data/processed/nifty50_5min_features.csv"
 SEQ_LENGTH = 30
-FASTAPI_URL = "http://127.0.0.1:8000/predict"
+#FASTAPI_URL = "http://127.0.0.1:8000/predict"            # Local testing
+#FASTAPI_URL = "http://backend_app:8000/predict"            # Docker testing
+
+
+hostname = socket.gethostname()
+if hostname == "backend_app" or "DOCKER" in os.environ:
+    FASTAPI_URL = "http://backend_app:8000/predict"
+else:
+    FASTAPI_URL = "http://127.0.0.1:8000/predict"
 
 # Initialize session state variables
 if "feedback" not in st.session_state:
