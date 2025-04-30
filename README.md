@@ -5,7 +5,7 @@ This project is an end-to-end AI application that predicts Nifty50 stock prices 
 ---
 
 ## Features
-- Fetches 5-minute interval stock data for `NIFTYBEES.NS` via `yfinance`
+- Fetches 5-minute interval stock data for `Nifty50 Index` via `yfinance`
 - Validates and transforms data with rolling averages
 - 🛠Modular pipeline structure (Ingest → Validate → Transform)
 - Version-controlled data pipeline with DVC
